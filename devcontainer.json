@@ -1,0 +1,59 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+    "name": "Licensing",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/dotnet:0-7.0",
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    // "features": {},
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            "settings": {
+                "extensions.autoUpdate": true,
+                "extensions.autoCheckUpdates": true
+            },
+            "extensions": [
+                "streetsidesoftware.code-spell-checker",
+                "JetBrains.dotnet-interactive",
+                "JetBrains.resharper",
+                "GitHub.copilot",
+                "eamodio.gitlens",
+                "ms-dotnettools.csharp"
+            ]
+        }
+    },
+    // Use 'portsAttributes' to set default properties for specific forwarded ports. 
+    // More info: https://containers.dev/implementors/json_reference/#port-attributes
+    "portsAttributes": {
+        "5000": {
+            "label": "Hello Remote World",
+            "onAutoForward": "notify"
+        },
+        "5001": {
+            "protocol": "https"
+        }
+    },
+    "mounts": [
+        // "source=%APPDATA%\ASP.NET\Https/ASP.NET/DataProtection-Keys,target=/root/.aspnet/DataProtection-Keys,type=bind" // For Windows
+        "source=${localWorkspaceFolder}/setup/https/aspnetapp.pfx,target=/root/.aspnet/https,type=bind"
+
+        // "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached"
+        // "source=${localWorkspaceFolder}/resharper, target=/root/.resharper, type=bind"
+    ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        5000,
+        5001
+    ],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "dotnet restore",
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "postCreateCommand": "apt-get update && apt-get install -y curl && curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /vsdbg && dotnet dev-certs https --clean && dotnet dev-certs https --trust && curl -sSL https://install.gitversion.net | bash",
+    "remoteUser": "root",
+    "remoteEnv": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+        // "ASPNETCORE_URLS": "http://*:5000;https://*:5001"
+    }
+}
